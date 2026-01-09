@@ -1,6 +1,6 @@
-flask_cors
-mediapipe
-opencv_python
 flask
-numpy
+flask-cors
 gunicorn
+opencv-python-headless
+mediapipe==0.10.31
+numpy
