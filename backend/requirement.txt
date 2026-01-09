@@ -3,3 +3,4 @@ mediapipe
 opencv_python
 flask
 numpy
+gunicorn
