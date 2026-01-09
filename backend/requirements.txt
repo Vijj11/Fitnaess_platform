@@ -4,10 +4,3 @@ gunicorn
 numpy==1.26.4
 opencv-python-headless==4.11.0.86
 mediapipe==0.10.31
-openai
-google-generativeai
-google-ai-generativelanguage
-google-api-python-client
-google-auth*
-grpcio*
-protobuf
