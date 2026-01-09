@@ -101,7 +101,7 @@ matplotlib==3.10.1
 matplotlib-inline==0.1.7
 mccabe==0.7.0
 mdurl==0.1.2
-mediapipe==0.10.21
+mediapipe==0.10.31
 mistune==3.1.2
 ml_dtypes==0.5.3
 mongoengine==0.29.1
