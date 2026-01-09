@@ -4,10 +4,31 @@ import mediapipe as mp
 from flask_cors import CORS
 import math
 import time
+import os
 
 app = Flask(__name__)
-CORS(app, resources={r"/dumbbell_lateral_raise": {"origins": "http://localhost:3000"}})
 
+# ✅ CORS: allow local + deployed frontend
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "https://your-frontend.vercel.app"
+        ]
+    }
+})
+
+# -------------------------
+# Health check (IMPORTANT for deployment)
+# -------------------------
+@app.route("/")
+def home():
+    return "Fitness backend is running"
+
+# -------------------------
+# MediaPipe setup
+# -------------------------
 mpDraw = mp.solutions.drawing_utils
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
@@ -16,7 +37,6 @@ pose = mpPose.Pose()
 # Helper utilities
 # -------------------------
 def calculate_angle(a, b, c):
-    """Calculate angle ABC in degrees where a,b,c are (x,y) or [x,y]."""
     ax, ay = a[0], a[1]
     bx, by = b[0], b[1]
     cx, cy = c[0], c[1]
@@ -34,13 +54,11 @@ def landmark_dict(landmarks, img_shape):
     return pts
 
 class PostureMonitor:
-    """Time-based sustained-failure detector."""
     def __init__(self, sustain_seconds=2.5):
         self.sustain_seconds = sustain_seconds
         self.bad_since = None
 
     def update(self, posture_ok: bool):
-        """Call each frame. Returns True if posture has been bad continuously for sustain_seconds."""
         now = time.time()
         if posture_ok:
             self.bad_since = None
@@ -49,6 +67,7 @@ class PostureMonitor:
             self.bad_since = now
             return False
         return (now - self.bad_since) >= self.sustain_seconds
+    
 def read_and_prepare_frame(cap, target_size=(1280,720)):
     success, img = cap.read()
     if not success or img is None:
@@ -721,5 +740,6 @@ def jump_squat_counter():
 # -------------------------
 # Main
 # -------------------------
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
